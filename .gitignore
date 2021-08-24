@@ -17,3 +17,5 @@ build/
 .flaskenv
 
 *.db
+
+logs/
