@@ -14,8 +14,9 @@ build/
 *.egg-info/
 
 .vscode/
-.flaskenv
-
-*.db
 
 logs/
+migrations/
+instance/
+.flaskenv
+*.db
