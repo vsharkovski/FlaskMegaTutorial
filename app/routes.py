@@ -2,8 +2,9 @@ from datetime import datetime
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
+
 from app import app, db
-from app.forms import EditProfileForm, RegisterForm, LoginForm
+from app.forms import EditProfileForm, EmptyForm, RegisterForm, LoginForm
 from app.models import User
 
 
@@ -31,7 +32,7 @@ def index():
     return render_template("index.html", posts=posts)
 
 
-@app.route("/register", methods=("GET", "POST"))
+@app.route("/register", methods=["GET", "POST"])
 def register():
     if current_user.is_authenticated:
         return redirect(url_for("index"))
@@ -48,7 +49,7 @@ def register():
     return render_template("register.html", form=form)
 
 
-@app.route("/login", methods=("GET", "POST"))
+@app.route("/login", methods=["GET", "POST"])
 def login():
     if current_user.is_authenticated:
         return redirect(url_for("index"))
@@ -85,10 +86,11 @@ def user(username):
         {"author": user, "body": "Test post #1"},
         {"author": user, "body": "Test post #2"}
     ]
-    return render_template("user.html", user=user, posts=posts)
+    form = EmptyForm()
+    return render_template("user.html", user=user, posts=posts, form=form)
 
 
-@app.route("/edit_profile", methods=("GET", "POST"))
+@app.route("/edit_profile", methods=["GET", "POST"])
 @login_required
 def edit_profile():
     form = EditProfileForm(current_user.username)
@@ -103,3 +105,45 @@ def edit_profile():
         form.about_me.data = current_user.about_me
     
     return render_template("edit_profile.html", form=form)
+
+
+@app.route("/follow/<username>", methods=["POST"])
+@login_required
+def follow(username):
+    form = EmptyForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=username).first()
+        if user is None:
+            flash(f"User {username} not found.")
+            return redirect(url_for("index"))
+        if user == current_user:
+            flash("You cannot follow yourself.")
+            return redirect(url_for("user", username=username))
+        current_user.follow(user)
+        db.session.commit()
+        flash(f"You are now following {username}!")
+        return redirect(url_for("user", username=username))
+    else:
+        # the CSRF token is missing or invalid
+        return redirect(url_for("index"))
+
+
+@app.route("/unfollow/<username>", methods=["POST"])
+@login_required
+def unfollow(username):
+    form = EmptyForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=username).first()
+        if user is None:
+            flash(f"User {username} not found.")
+            return redirect(url_for("index"))
+        if user == current_user:
+            flash("You cannot unfollow yourself.")
+            return redirect(url_for("user", username=username))
+        current_user.unfollow(user)
+        db.session.commit()
+        flash(f"You have stopped following {username}!")
+        return redirect(url_for("user", username=username))
+    else:
+        # the CSRF token is missing or invalid
+        return redirect(url_for("index"))
