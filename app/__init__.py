@@ -19,8 +19,6 @@ try:
 except OSError:
     pass
 
-print(app.config["SQLALCHEMY_DATABASE_URI"])
-
 # database and migration
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
@@ -59,7 +57,7 @@ if not app.debug:
     
     file_handler = RotatingFileHandler(
         os.path.join(logs_path, "microblog.log"),
-        maxBytes=10420,
+        maxBytes=10240,
         backupCount=10)
     file_handler.setFormatter(logging.Formatter(
         "%(asctime)s %(levelname):s %(message)s [in %(pathname):s%(lineno)d]"))
