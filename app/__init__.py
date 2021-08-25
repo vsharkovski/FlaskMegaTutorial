@@ -6,18 +6,30 @@ import logging
 from logging.handlers import SMTPHandler, RotatingFileHandler
 import os
 
-from config import Config
-
 
 app = Flask(__name__)
+
+# import config
+from config import Config
 app.config.from_object(Config)
 
+# create instance folder if needed
+try:
+    os.makedirs(app.instance_path)
+except OSError:
+    pass
+
+print(app.config["SQLALCHEMY_DATABASE_URI"])
+
+# database and migration
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
+# users
 login = LoginManager(app)
 login.login_view = "login"
 
+# debugging and logging
 if not app.debug:
     # Configure so errors are sent to admin emails
     if app.config["MAIL_SERVER"]:
@@ -39,11 +51,14 @@ if not app.debug:
         app.logger.addHandler(mail_handler)
 
     # Logging to a file
-    if not os.path.exists("logs"):
-        os.mkdir("logs")
+    logs_path = os.path.join(app.instance_path, "logs")
+    try:
+        os.mkdir(logs_path)
+    except OSError:
+        pass
     
     file_handler = RotatingFileHandler(
-        os.path.join("logs", "microblog.log"),
+        os.path.join(logs_path, "microblog.log"),
         maxBytes=10420,
         backupCount=10)
     file_handler.setFormatter(logging.Formatter(
@@ -56,5 +71,5 @@ if not app.debug:
     # Every time the server is started we log the following
     app.logger.info("Microblog startup")
 
-
+# import everything else
 from app import routes, models, errors
