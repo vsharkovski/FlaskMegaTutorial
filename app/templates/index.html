@@ -1,6 +1,7 @@
 {% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
 
-{% block title %}
+{% block app_title %}
     {% if title %}
         {{ title }}
     {% else %}
@@ -8,28 +9,13 @@
     {% endif %}
 {% endblock %}
 
-{% block content %}
+{% block app_content %}
     <h1>Hi, {{ current_user.username }}!</h1>
     {% if form %}
-        <form action="" method="post">
-            {{ form.hidden_tag() }}
-            <p>
-                {{ form.post.label }}<br>
-                {{ form.post(cols=52, rows=4) }}<br>
-                {% for error in form.post.errors %}
-                    <span style="color: red;">[{{ error }}]</span>
-                {% endfor %}
-            </p>
-            <p>{{ form.submit() }}</p>
-        </form>
+        {{ wtf.quick_form(form) }}
     {% endif %}
     {% for post in posts %}
         {% include "_post.html" %}
     {% endfor %}
-    {% if prev_url %}
-        <a href="{{ prev_url }}">Previous</a>
-    {% endif %}
-    {% if next_url %}
-        <a href="{{ next_url }}">Next</a>
-    {% endif %}
+    {% include "_pager.html" %}
 {% endblock %}

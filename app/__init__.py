@@ -1,11 +1,13 @@
+import logging
+from logging.handlers import SMTPHandler, RotatingFileHandler
+import os
+
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail
 from flask_migrate import Migrate
 from flask_login import LoginManager
-import logging
-from logging.handlers import SMTPHandler, RotatingFileHandler
-import os
+from flask_bootstrap import Bootstrap
 
 
 app = Flask(__name__)
@@ -30,6 +32,9 @@ login.login_view = "login"
 
 # mail
 mail = Mail(app)
+
+# Bootstrap
+bootstrap = Bootstrap(app)
 
 # debugging and logging
 if not app.debug:

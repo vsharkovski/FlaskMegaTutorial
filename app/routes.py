@@ -119,7 +119,8 @@ def user(username):
         form=form,
         posts=posts.items,
         prev_url=prev_url,
-        next_url=next_url)
+        next_url=next_url
+    )
 
 
 @app.route("/edit_profile", methods=["GET", "POST"])
@@ -148,9 +149,11 @@ def follow(username):
         if user is None:
             flash(f"User {username} not found.")
             return redirect(url_for("index"))
+
         if user == current_user:
             flash("You cannot follow yourself.")
             return redirect(url_for("user", username=username))
+
         current_user.follow(user)
         db.session.commit()
         flash(f"You are now following {username}!")
@@ -204,7 +207,8 @@ def index():
         form=form,
         posts=posts.items,
         prev_url=prev_url,
-        next_url=next_url)
+        next_url=next_url
+    )
 
 
 @app.route("/explore")
@@ -222,4 +226,5 @@ def explore():
         title="Explore",
         posts=posts.items,
         prev_url=prev_url,
-        next_url=next_url)
+        next_url=next_url
+    )
