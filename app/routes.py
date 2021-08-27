@@ -1,4 +1,5 @@
 from datetime import datetime
+
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
@@ -172,9 +173,11 @@ def unfollow(username):
         if user is None:
             flash(f"User {username} not found.")
             return redirect(url_for("index"))
+
         if user == current_user:
             flash("You cannot unfollow yourself.")
             return redirect(url_for("user", username=username))
+
         current_user.unfollow(user)
         db.session.commit()
         flash(f"You have stopped following {username}!")
@@ -195,6 +198,7 @@ def index():
         db.session.commit()
         flash("Your post is now live!")
         return redirect(url_for("index"))
+
     page = request.args.get("page", 1, type=int)
     posts = current_user.followed_posts().paginate(
         page, app.config["POSTS_PER_PAGE"], False)
