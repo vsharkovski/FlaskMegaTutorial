@@ -1,13 +1,18 @@
 import os
+from dotenv import load_dotenv
 
-from app import app
+
+basedir = os.path.abspath(os.path.dirname(__name__))
+instance_path = os.path.join(basedir, "instance")
+
+load_dotenv(os.path.join(basedir, ".env"))
 
 
 class Config(object):
     SECRET_KEY = os.environ.get("SECRET_KEY") or "you-will-never-guess"
-    
+
     SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL") or \
-        "sqlite:///" + os.path.join(app.instance_path, "app.db")
+        "sqlite:///" + os.path.join(instance_path, "app.db")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     MAIL_SERVER = os.environ.get("MAIL_SERVER")

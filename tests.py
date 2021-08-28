@@ -1,22 +1,29 @@
 from datetime import datetime, timedelta
 import unittest
 
-from app import app, db
+from app import create_app, db
 from app.models import User, Post
+
+from config import Config
+
+
+class TestConfig(Config):
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI = "sqlite://"
 
 
 class UserModelCase(unittest.TestCase):
     def setUp(self):
-        # make SQLAlchemy use an in-memory SQL database
-        app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite://"
-        # create all database tables
+        self.app = create_app(TestConfig)
+        self.app_context = self.app.app_context()
+        self.app_context.push()
         db.create_all()
     
     def tearDown(self):
         # https://stackoverflow.com/questions/39480914/why-db-session-remove-must-be-called
         db.session.remove()
-        # drop all tables
         db.drop_all()
+        self.app_context.pop()
 
     def test_password_hashing(self):
         u = User(username="susan")
