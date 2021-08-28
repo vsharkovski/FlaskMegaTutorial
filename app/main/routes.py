@@ -1,10 +1,12 @@
 from datetime import datetime
 
-from flask import render_template, flash, redirect, url_for, request, jsonify
+from flask import (
+    render_template, flash, redirect, url_for, jsonify, current_app, request 
+)
 from flask_login import current_user, login_required
 from guess_language import guess_language
 
-from app import db, current_app
+from app import db
 from app.models import User, Post
 from app.translate import translate
 

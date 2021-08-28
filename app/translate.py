@@ -1,6 +1,6 @@
 import json
 import requests
-from app import current_app
+from flask import current_app
 
 
 def translate(text, source_language, dest_language="en"):
