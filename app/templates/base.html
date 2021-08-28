@@ -1,5 +1,13 @@
 {% extends "bootstrap/base.html" %}
 
+{% block scripts %}
+    {{ super() }}
+    {{ moment.include_moment() }}
+    <script type="text/javascript">
+        {% include "base.js" %}
+    </script>
+{% endblock %}
+
 {% block title %}
     {% block app_title %}{% endblock %} - Microblog
 {% endblock %}
