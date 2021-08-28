@@ -32,3 +32,7 @@ MAIL_PASSWORD=my-gmail-password
 MAIL_ADMIN_ADDRESS=my-gmail-account@gmail.com
 MS_TRANSLATOR_KEY=my-translator-api-key
 ```
+
+## Running the server
+1. Activate the virtual environment
+2. Use the command `flask run`
